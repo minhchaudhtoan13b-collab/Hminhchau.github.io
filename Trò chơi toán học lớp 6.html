@@ -1,0 +1,1510 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ô Cửa Bí Mật - Toán Học Lớp 6</title>
+  <style>
+    /* ==========================================
+       1. CẤU HÌNH BIẾN & RESET CSS
+       ========================================== */
+    :root {
+      --primary: #4f46e5;
+      --primary-hover: #4338ca;
+      --secondary: #06b6d4;
+      --accent: #f59e0b;
+      --success: #10b981;
+      --danger: #ef4444;
+      --bg-dark: #0f172a;
+      --bg-card: #1e293b;
+      --bg-light: #f8fafc;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --border-color: #334155;
+      --radius-sm: 6px;
+      --radius-md: 12px;
+      --radius-lg: 20px;
+      --shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3), 0 8px 10px -6px rgba(0, 0, 0, 0.3);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    }
+
+    body {
+      background: radial-gradient(circle at center, #1e1b4b 0%, #0f172a 100%);
+      color: var(--text-main);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: space-between;
+      padding: 20px;
+      overflow-x: hidden;
+    }
+
+    /* ==========================================
+       2. HEADER & THANH CÔNG CỤ
+       ========================================== */
+    header {
+      width: 100%;
+      max-width: 1100px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: rgba(30, 41, 59, 0.7);
+      backdrop-filter: blur(10px);
+      border: 1px solid var(--border-color);
+      padding: 15px 25px;
+      border-radius: var(--radius-md);
+      box-shadow: var(--shadow);
+      margin-bottom: 20px;
+    }
+
+    .title-area h1 {
+      font-size: 1.8rem;
+      font-weight: 800;
+      background: linear-gradient(to right, #38bdf8, #818cf8, #c084fc);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .title-area p {
+      color: var(--text-muted);
+      font-size: 0.95rem;
+      margin-top: 4px;
+    }
+
+    .btn {
+      background: var(--primary);
+      color: white;
+      border: none;
+      padding: 10px 18px;
+      border-radius: var(--radius-sm);
+      font-weight: 600;
+      font-size: 0.95rem;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.2s ease;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.2);
+    }
+
+    .btn:hover {
+      background: var(--primary-hover);
+      transform: translateY(-2px);
+    }
+
+    .btn:active {
+      transform: translateY(0);
+    }
+
+    .btn-secondary { background: #475569; }
+    .btn-secondary:hover { background: #334155; }
+    .btn-success { background: var(--success); }
+    .btn-success:hover { background: #059669; }
+    .btn-warning { background: var(--accent); color: #000; }
+    .btn-warning:hover { background: #d97706; }
+    .btn-danger { background: var(--danger); }
+    .btn-danger:hover { background: #dc2626; }
+
+    /* ==========================================
+       3. TIẾN TRÌNH & BẢNG CHƠI CHÍNH
+       ========================================== */
+    .game-container {
+      width: 100%;
+      max-width: 1100px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 20px;
+      flex-grow: 1;
+    }
+
+    .progress-bar-container {
+      width: 100%;
+      background: rgba(30, 41, 59, 0.6);
+      border: 1px solid var(--border-color);
+      border-radius: 50px;
+      padding: 6px 15px;
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .progress-text {
+      font-weight: 600;
+      font-size: 0.9rem;
+      white-space: nowrap;
+      color: var(--secondary);
+    }
+
+    .progress-track {
+      flex-grow: 1;
+      height: 12px;
+      background: #0f172a;
+      border-radius: 10px;
+      overflow: hidden;
+      border: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .progress-fill {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, var(--secondary), var(--success));
+      border-radius: 10px;
+      transition: width 0.4s ease;
+    }
+
+    .board-wrapper {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 16 / 9;
+      max-height: 65vh;
+      background: var(--bg-card);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      border: 4px solid var(--border-color);
+      box-shadow: var(--shadow);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .secret-image-layer {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      z-index: 1;
+      background-position: center;
+      background-size: cover;
+      background-repeat: no-repeat;
+    }
+
+    .placeholder-image {
+      position: absolute;
+      z-index: 1;
+      text-align: center;
+      color: var(--text-muted);
+      padding: 20px;
+    }
+
+    .placeholder-image svg {
+      width: 64px;
+      height: 64px;
+      margin-bottom: 10px;
+      opacity: 0.5;
+    }
+
+    .doors-grid {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 2;
+      display: grid;
+      gap: 4px;
+      padding: 4px;
+      background: rgba(15, 23, 42, 0.4);
+    }
+
+    /* ==========================================
+       4. HIỆU ỨNG 3D Ô CỬA BÍ MẬT
+       ========================================== */
+    .door-frame {
+      perspective: 1000px;
+      position: relative;
+      width: 100%;
+      height: 100%;
+    }
+
+    .door {
+      width: 100%;
+      height: 100%;
+      position: relative;
+      transform-style: preserve-3d;
+      transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+      transform-origin: left center;
+      cursor: pointer;
+    }
+
+    .door-front, .door-back {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      backface-visibility: hidden;
+      border-radius: var(--radius-sm);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      user-select: none;
+    }
+
+    .door-front {
+      background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+      border: 2px solid #60a5fa;
+      color: white;
+      box-shadow: inset 0 0 15px rgba(0,0,0,0.3);
+    }
+
+    .door-front:hover {
+      background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+      border-color: #93c5fd;
+    }
+
+    .door-icon {
+      font-size: 1.8rem;
+      margin-bottom: 4px;
+      filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
+    }
+
+    .door-number {
+      font-size: 1.4rem;
+      font-weight: 800;
+      background: rgba(0, 0, 0, 0.25);
+      padding: 2px 12px;
+      border-radius: 20px;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .door-back {
+      background: transparent;
+      transform: rotateY(180deg);
+    }
+
+    .door-frame.opened .door {
+      transform: rotateY(-105deg);
+      pointer-events: none;
+    }
+
+    .door-frame.opened {
+      pointer-events: none;
+    }
+
+    /* ==========================================
+       5. BẢNG NÚT ĐIỀU KHIỂN DƯỚI
+       ========================================== */
+    .controls-bar {
+      width: 100%;
+      max-width: 1100px;
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      flex-wrap: wrap;
+      background: rgba(30, 41, 59, 0.7);
+      backdrop-filter: blur(10px);
+      border: 1px solid var(--border-color);
+      padding: 12px 20px;
+      border-radius: var(--radius-md);
+      box-shadow: var(--shadow);
+    }
+
+    /* ==========================================
+       6. MODAL CÂU HỎI & TRẮC NGHIỆM
+       ========================================== */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(15, 23, 42, 0.85);
+      backdrop-filter: blur(8px);
+      z-index: 100;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s ease;
+      padding: 20px;
+    }
+
+    .modal-overlay.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .modal-container {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      width: 100%;
+      max-width: 700px;
+      max-height: 90vh;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+      transform: scale(0.9);
+      transition: transform 0.3s ease;
+      overflow: hidden;
+    }
+
+    .modal-overlay.active .modal-container {
+      transform: scale(1);
+    }
+
+    .modal-header {
+      padding: 18px 24px;
+      border-bottom: 1px solid var(--border-color);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: rgba(15, 23, 42, 0.4);
+    }
+
+    .modal-header h2 {
+      font-size: 1.3rem;
+      color: var(--secondary);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .modal-close {
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      font-size: 1.5rem;
+      cursor: pointer;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .modal-close:hover {
+      background: rgba(255, 255, 255, 0.1);
+      color: white;
+    }
+
+    .modal-body {
+      padding: 24px;
+      overflow-y: auto;
+      flex-grow: 1;
+    }
+
+    .modal-footer {
+      padding: 16px 24px;
+      border-top: 1px solid var(--border-color);
+      display: flex;
+      justify-content: flex-end;
+      gap: 12px;
+      background: rgba(15, 23, 42, 0.4);
+    }
+
+    .question-box {
+      background: #0f172a;
+      border: 1px solid var(--border-color);
+      padding: 20px;
+      border-radius: var(--radius-md);
+      font-size: 1.2rem;
+      line-height: 1.6;
+      margin-bottom: 20px;
+      color: var(--text-main);
+      min-height: 80px;
+    }
+
+    /* ĐÁP ÁN TRẮC NGHIỆM */
+    .mc-options-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 15px;
+    }
+
+    .mc-option-btn {
+      background: #0f172a;
+      border: 2px solid var(--border-color);
+      border-radius: var(--radius-md);
+      padding: 14px 18px;
+      color: white;
+      font-size: 1rem;
+      font-weight: 600;
+      text-align: left;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .mc-option-btn:hover {
+      border-color: var(--primary);
+      background: rgba(79, 70, 229, 0.1);
+    }
+
+    .mc-option-btn.correct {
+      background: rgba(16, 185, 129, 0.2) !important;
+      border-color: var(--success) !important;
+      color: #6ee7b7 !important;
+    }
+
+    .mc-option-btn.wrong {
+      background: rgba(239, 68, 68, 0.2) !important;
+      border-color: var(--danger) !important;
+      color: #fca5a5 !important;
+    }
+
+    /* ĐÁP ÁN NHẬP TỰ LUẬN */
+    .text-answer-input-group {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 15px;
+    }
+
+    .answer-box {
+      background: rgba(16, 185, 129, 0.1);
+      border: 1px solid var(--success);
+      padding: 15px 20px;
+      border-radius: var(--radius-md);
+      color: #6ee7b7;
+      font-size: 1.1rem;
+      display: none;
+      animation: fadeIn 0.3s ease;
+    }
+
+    .answer-box.visible {
+      display: block;
+    }
+
+    /* ==========================================
+       7. TAB CÀI ĐẶT
+       ========================================== */
+    .tabs-nav {
+      display: flex;
+      border-bottom: 1px solid var(--border-color);
+      margin-bottom: 20px;
+      gap: 5px;
+    }
+
+    .tab-btn {
+      padding: 10px 16px;
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      font-weight: 600;
+      cursor: pointer;
+      border-bottom: 2px solid transparent;
+      transition: all 0.2s ease;
+    }
+
+    .tab-btn:hover {
+      color: var(--text-main);
+    }
+
+    .tab-btn.active {
+      color: var(--secondary);
+      border-bottom-color: var(--secondary);
+    }
+
+    .tab-content {
+      display: none;
+    }
+
+    .tab-content.active {
+      display: block;
+    }
+
+    .form-group {
+      margin-bottom: 18px;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 600;
+      font-size: 0.9rem;
+      color: var(--text-muted);
+    }
+
+    .form-control {
+      width: 100%;
+      padding: 10px 14px;
+      background: #0f172a;
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-sm);
+      color: white;
+      font-size: 0.95rem;
+    }
+
+    .form-control:focus {
+      outline: none;
+      border-color: var(--primary);
+    }
+
+    .grid-presets {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 15px;
+      flex-wrap: wrap;
+    }
+
+    .preset-btn {
+      padding: 8px 14px;
+      background: #0f172a;
+      border: 1px solid var(--border-color);
+      color: white;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+    }
+
+    .preset-btn:hover {
+      border-color: var(--secondary);
+    }
+
+    .image-preview-area {
+      width: 100%;
+      height: 180px;
+      border: 2px dashed var(--border-color);
+      border-radius: var(--radius-md);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+      background: #0f172a;
+    }
+
+    .image-preview-area img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .question-editor-list {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+      max-height: 400px;
+      overflow-y: auto;
+      padding-right: 5px;
+    }
+
+    .question-item-card {
+      background: #0f172a;
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      padding: 15px;
+    }
+
+    .question-item-header {
+      font-weight: 700;
+      color: var(--secondary);
+      margin-bottom: 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .type-selector {
+      display: flex;
+      gap: 15px;
+      background: rgba(255,255,255,0.05);
+      padding: 6px 12px;
+      border-radius: var(--radius-sm);
+      font-size: 0.85rem;
+    }
+
+    .type-selector label {
+      cursor: pointer;
+      margin: 0;
+      color: white;
+    }
+
+    /* ==========================================
+       8. CHIẾN THẮNG & TOAST
+       ========================================== */
+    .victory-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      pointer-events: none;
+      z-index: 200;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .victory-card {
+      background: rgba(15, 23, 42, 0.95);
+      border: 2px solid var(--accent);
+      padding: 30px 50px;
+      border-radius: var(--radius-lg);
+      text-align: center;
+      box-shadow: 0 0 50px rgba(245, 158, 11, 0.4);
+      transform: scale(0);
+      transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      pointer-events: auto;
+    }
+
+    .victory-overlay.active .victory-card {
+      transform: scale(1);
+    }
+
+    .victory-card h2 {
+      font-size: 2.2rem;
+      color: var(--accent);
+      margin-bottom: 10px;
+    }
+
+    .toast-container {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      z-index: 300;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .toast {
+      background: var(--bg-card);
+      border-left: 4px solid var(--primary);
+      color: white;
+      padding: 12px 20px;
+      border-radius: var(--radius-sm);
+      box-shadow: var(--shadow);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      animation: slideIn 0.3s forwards;
+    }
+
+    .toast.success { border-left-color: var(--success); }
+    .toast.danger { border-left-color: var(--danger); }
+    .toast.warning { border-left-color: var(--accent); }
+
+    @keyframes slideIn {
+      from { transform: translateX(100%); opacity: 0; }
+      to { transform: translateX(0); opacity: 1; }
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(5px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @media (max-width: 768px) {
+      header { flex-direction: column; gap: 15px; text-align: center; }
+      .controls-bar { gap: 8px; }
+      .btn { padding: 8px 12px; font-size: 0.85rem; }
+      .mc-options-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- HEADER -->
+  <header>
+    <div class="title-area">
+      <h1 id="ui-game-title">📐 Ô CỬA BÍ MẬT - TOÁN 6</h1>
+      <p id="ui-game-subtitle">Giải đáp thử thách Toán học để mở cánh cửa bí mật!</p>
+    </div>
+    <button class="btn btn-secondary" onclick="openSettingsModal()">
+      ⚙ Cài Đặt
+    </button>
+  </header>
+
+  <!-- BẢNG CHƠI CHÍNH -->
+  <main class="game-container">
+    <div class="progress-bar-container">
+      <span class="progress-text" id="progress-text">Tiến trình: 0/12 ô cửa</span>
+      <div class="progress-track">
+        <div class="progress-fill" id="progress-fill"></div>
+      </div>
+    </div>
+
+    <div class="board-wrapper" id="board-wrapper">
+      <div class="secret-image-layer" id="secret-image-layer"></div>
+      
+      <div class="placeholder-image" id="placeholder-image">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+        </svg>
+        <p>Bức ảnh bí mật đang ẩn phía sau.<br>Hãy chọn Cài Đặt để tải ảnh lên!</p>
+      </div>
+
+      <div class="doors-grid" id="doors-grid"></div>
+    </div>
+  </main>
+
+  <!-- ĐIỀU KHIỂN DƯỚI -->
+  <footer class="controls-bar">
+    <button class="btn btn-secondary" onclick="restartGame()">🎮 Chơi Lại</button>
+    <button class="btn btn-secondary" onclick="resetState()">🔄 Đặt Lại</button>
+    <button class="btn btn-warning" onclick="openAllDoors()">👁 Mở Tất Cả</button>
+    <button class="btn btn-secondary" onclick="openHelpModal()">❓ Hướng Dẫn</button>
+  </footer>
+
+  <!-- MODAL CÂU HỎI & TRẢ LỜI -->
+  <div class="modal-overlay" id="question-modal">
+    <div class="modal-container">
+      <div class="modal-header">
+        <h2 id="q-modal-title">🚪 Ô CỬA SỐ 1</h2>
+        <button class="modal-close" onclick="closeModal('question-modal')">&times;</button>
+      </div>
+      <div class="modal-body">
+        <label style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 8px; display: block;">CÂU HỎI TOÁN 6:</label>
+        <div class="question-box" id="q-modal-question">Nội dung câu hỏi ở đây...</div>
+
+        <!-- KHU VỰC DÀNH CHO TRẮC NGHIỆM -->
+        <div id="q-modal-mc-container" style="display: none;">
+          <label style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 8px; display: block;">CHỌN 1 ĐÁP ÁN ĐÚNG:</label>
+          <div class="mc-options-grid">
+            <button class="mc-option-btn" onclick="checkMultipleChoice(0)"><span id="opt-0-text">A. </span></button>
+            <button class="mc-option-btn" onclick="checkMultipleChoice(1)"><span id="opt-1-text">B. </span></button>
+            <button class="mc-option-btn" onclick="checkMultipleChoice(2)"><span id="opt-2-text">C. </span></button>
+            <button class="mc-option-btn" onclick="checkMultipleChoice(3)"><span id="opt-3-text">D. </span></button>
+          </div>
+        </div>
+
+        <!-- KHU VỰC DÀNH CHO TỰ LUẬN -->
+        <div id="q-modal-text-container" style="display: none;">
+          <label style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 8px; display: block;">NHẬP KẾT QUẢ ĐÚNG (chỉ nhập số hoặc kết quả):</label>
+          <div class="text-answer-input-group">
+            <input type="text" class="form-control" id="user-typed-answer" placeholder="Nhập đáp án..." onkeyup="if(event.key==='Enter') submitTypedAnswer()">
+            <button class="btn btn-primary" onclick="submitTypedAnswer()">Gửi</button>
+          </div>
+        </div>
+
+        <!-- HIỂN THỊ ĐÁP ÁN -->
+        <div class="answer-box" id="q-modal-answer">
+          <strong>Đáp án đúng:</strong> <span id="q-modal-answer-text">...</span>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-warning" onclick="toggleAnswer()">💡 Xem Đáp Án</button>
+        <button class="btn btn-success" onclick="openCurrentDoorFromModal()">🚪 Mở Cửa Tự Do</button>
+        <button class="btn btn-secondary" onclick="closeModal('question-modal')">✖ Đóng</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL CÀI ĐẶT -->
+  <div class="modal-overlay" id="settings-modal">
+    <div class="modal-container" style="max-width: 850px;">
+      <div class="modal-header">
+        <h2>⚙ CÀI ĐẶT TRÒ CHƠI</h2>
+        <button class="modal-close" onclick="closeModal('settings-modal')">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="tabs-nav">
+          <button class="tab-btn active" onclick="switchTab('tab-info')">1. Thông Tin</button>
+          <button class="tab-btn" onclick="switchTab('tab-image')">2. Ảnh Bí Mật</button>
+          <button class="tab-btn" onclick="switchTab('tab-grid')">3. Kích Thước Lưới</button>
+          <button class="tab-btn" onclick="switchTab('tab-questions')">4. Quản Lý Câu Hỏi</button>
+        </div>
+
+        <!-- TAB 1: THÔNG TIN -->
+        <div class="tab-content active" id="tab-info">
+          <div class="form-group">
+            <label>Tên trò chơi:</label>
+            <input type="text" class="form-control" id="cfg-title" placeholder="VD: Ô Cửa Bí Mật - Toán 6">
+          </div>
+          <div class="form-group">
+            <label>Phụ đề / Hướng dẫn ngắn:</label>
+            <input type="text" class="form-control" id="cfg-subtitle" placeholder="VD: Giải toán để khám phá hình ảnh ẩn giấu">
+          </div>
+        </div>
+
+        <!-- TAB 2: BỨC ẢNH BÍ MẬT -->
+        <div class="tab-content" id="tab-image">
+          <div class="form-group">
+            <label>Chọn bức ảnh bí mật:</label>
+            <div class="image-preview-area" onclick="document.getElementById('file-input-image').click()">
+              <img id="cfg-img-preview" src="" style="display:none;">
+              <div id="cfg-img-placeholder" style="text-align: center;">
+                <p>📁 Nhấp vào đây để chọn ảnh từ máy tính</p>
+                <small style="color: var(--text-muted);">Hỗ trợ JPG, PNG, WEBP, GIF</small>
+              </div>
+            </div>
+            <input type="file" id="file-input-image" accept="image/*" style="display:none" onchange="handleImageUpload(event)">
+          </div>
+          <div style="display: flex; gap: 10px;">
+            <button class="btn btn-danger" onclick="removeSecretImage()">🗑 Xóa Ảnh</button>
+          </div>
+        </div>
+
+        <!-- TAB 3: KÍCH THƯỚC LƯỚI -->
+        <div class="tab-content" id="tab-grid">
+          <label class="form-group">Chọn nhanh cấu trúc lưới:</label>
+          <div class="grid-presets">
+            <button class="preset-btn" onclick="setGridPreset(2, 2)">2 × 2 (4 ô)</button>
+            <button class="preset-btn" onclick="setGridPreset(2, 3)">2 × 3 (6 ô)</button>
+            <button class="preset-btn" onclick="setGridPreset(3, 3)">3 × 3 (9 ô)</button>
+            <button class="preset-btn" onclick="setGridPreset(3, 4)">3 × 4 (12 ô)</button>
+            <button class="preset-btn" onclick="setGridPreset(4, 4)">4 × 4 (16 ô)</button>
+          </div>
+          <div style="display: flex; gap: 20px; margin-top: 15px;">
+            <div class="form-group" style="flex: 1;">
+              <label>Số hàng:</label>
+              <input type="number" class="form-control" id="cfg-rows" min="1" max="8" value="3" onchange="updateGridCustom()">
+            </div>
+            <div class="form-group" style="flex: 1;">
+              <label>Số cột:</label>
+              <input type="number" class="form-control" id="cfg-cols" min="1" max="8" value="4" onchange="updateGridCustom()">
+            </div>
+          </div>
+          <p style="color: var(--secondary); font-weight: 600;">Tổng số ô cửa: <span id="cfg-total-doors">12</span></p>
+        </div>
+
+        <!-- TAB 4: CÂU HỎI VÀ ĐÁP ÁN -->
+        <div class="tab-content" id="tab-questions">
+          <div class="question-editor-list" id="question-editor-list">
+            <!-- Render danh sách câu hỏi -->
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-footer" style="justify-content: space-between;">
+        <div style="display: flex; gap: 8px;">
+          <button class="btn btn-secondary" onclick="exportJSON()">📥 Xuất JSON</button>
+          <button class="btn btn-secondary" onclick="document.getElementById('file-input-json').click()">📤 Nhập JSON</button>
+          <input type="file" id="file-input-json" accept=".json" style="display:none" onchange="importJSON(event)">
+        </div>
+        <div style="display: flex; gap: 8px;">
+          <button class="btn btn-danger" onclick="clearConfiguration()">🗑 Khôi Phục Mặc Định</button>
+          <button class="btn btn-success" onclick="saveSettings()">💾 Lưu Cấu Hình</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL HƯỚNG DẪN -->
+  <div class="modal-overlay" id="help-modal">
+    <div class="modal-container">
+      <div class="modal-header">
+        <h2>❓ HƯỚNG DẪN SỬ DỤNG</h2>
+        <button class="modal-close" onclick="closeModal('help-modal')">&times;</button>
+      </div>
+      <div class="modal-body" style="line-height: 1.7;">
+        <ol style="padding-left: 20px; display: flex; flex-direction: column; gap: 10px;">
+          <li><strong>Thử thách:</strong> Nhấp vào từng ô cửa để hiển thị bài toán.</li>
+          <li><strong>Tự động mở cửa:</strong> Chọn đáp án trắc nghiệm đúng hoặc nhập chính xác kết quả vào ô tự luận, ô cửa sẽ <strong>tự động mở ra ngay lập tức</strong>.</li>
+          <li><strong>Tùy chỉnh:</strong> Giáo viên có thể vào <code>⚙ Cài Đặt</code> để chỉnh sửa câu hỏi hoặc chọn bức ảnh khác làm phần thưởng.</li>
+        </ol>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-primary" onclick="closeModal('help-modal')">Đã Hiểu</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- CHIẾN THẮNG -->
+  <div class="victory-overlay" id="victory-overlay">
+    <div class="victory-card">
+      <h2>🎉 CHÚC MỪNG! 🎉</h2>
+      <p style="font-size: 1.2rem; margin-bottom: 20px;">Bạn đã hoàn thành xuất sắc các bài toán và mở trọn vẹn bức ảnh!</p>
+      <button class="btn btn-warning" onclick="closeVictory()">Xem Lại Bức Ảnh</button>
+    </div>
+  </div>
+
+  <div class="toast-container" id="toast-container"></div>
+
+  <!-- ==========================================
+       JAVASCRIPT LOGIC
+       ========================================== -->
+  <script>
+    /* BỘ CÂU HỎI MẶC ĐỊNH - CHỦ ĐỀ TOÁN LỚP 6 */
+    const DEFAULT_CONFIG = {
+      version: "2.0",
+      gameTitle: "📐 Ô CỬA BÍ MẬT - TOÁN 6",
+      subtitle: "Giải đáp thử thách Toán học để mở cánh cửa bí mật!",
+      rows: 3,
+      cols: 4,
+      secretImage: "",
+      questions: [
+        { 
+          id: 1, 
+          type: "mc", 
+          question: "Tập hợp các số tự nhiên N* không bao gồm số nào?", 
+          options: ["A. Số 1", "B. Số 0", "C. Số 10", "D. Số 100"], 
+          correctOpt: 1,
+          answer: "B. Số 0" 
+        },
+        { 
+          id: 2, 
+          type: "text", 
+          question: "Tính kết quả phép tính: 2^3 + 5 = ?", 
+          answer: "13" 
+        },
+        { 
+          id: 3, 
+          type: "mc", 
+          question: "Số nào sau đây chia hết cho cả 2 và 5?", 
+          options: ["A. 125", "B. 234", "C. 350", "D. 418"], 
+          correctOpt: 2,
+          answer: "C. 350" 
+        },
+        { 
+          id: 4, 
+          type: "text", 
+          question: "Ước chung lớn nhất (ƯCLN) của 12 và 18 là bao nhiêu?", 
+          answer: "6" 
+        },
+        { 
+          id: 5, 
+          type: "mc", 
+          question: "Kết quả của phép tính (-15) + 8 bằng bao nhiêu?", 
+          options: ["A. -7", "B. 7", "C. -23", "D. 23"], 
+          correctOpt: 0,
+          answer: "A. -7" 
+        },
+        { 
+          id: 6, 
+          type: "text", 
+          question: "Tìm x biết: x - (-5) = 10", 
+          answer: "5" 
+        },
+        { 
+          id: 7, 
+          type: "mc", 
+          question: "Hình nào sau đây có 4 cạnh bằng nhau và 4 góc vuông?", 
+          options: ["A. Hình chữ nhật", "B. Hình thoi", "C. Hình vuông", "D. Hình bình hành"], 
+          correctOpt: 2,
+          answer: "C. Hình vuông" 
+        },
+        { 
+          id: 8, 
+          type: "text", 
+          question: "Rút gọn phân số 15/20 về phân số tối giản:", 
+          answer: "3/4" 
+        },
+        { 
+          id: 9, 
+          type: "mc", 
+          question: "Kết quả phép tính: (3/5) + (2/5) bằng bao nhiêu?", 
+          options: ["A. 5/10", "B. 1", "C. 6/25", "D. 1/5"], 
+          correctOpt: 1,
+          answer: "B. 1" 
+        },
+        { 
+          id: 10, 
+          type: "text", 
+          question: "Tính chu vi hình chữ nhật có chiều dài 8cm và chiều rộng 5cm (cm):", 
+          answer: "26" 
+        },
+        { 
+          id: 11, 
+          type: "mc", 
+          question: "Làm tròn số 12,346 đến hàng phần trăm ta được số nào?", 
+          options: ["A. 12,34", "B. 12,35", "C. 12,30", "D. 12,40"], 
+          correctOpt: 1,
+          answer: "B. 12,35" 
+        },
+        { 
+          id: 12, 
+          type: "text", 
+          question: "Số đối của số -3/7 là phân số nào?", 
+          answer: "3/7" 
+        }
+      ]
+    };
+
+    let gameState = {
+      config: JSON.parse(JSON.stringify(DEFAULT_CONFIG)),
+      openedDoors: [],
+      currentActiveDoorId: null
+    };
+
+    const LOCAL_STORAGE_KEY = "OCuaBiMat_Toan6_Save";
+
+    window.addEventListener("DOMContentLoaded", () => {
+      loadFromLocalStorage();
+      renderApp();
+    });
+
+    function renderApp() {
+      document.getElementById("ui-game-title").innerText = gameState.config.gameTitle || "📐 Ô CỬA BÍ MẬT - TOÁN 6";
+      document.getElementById("ui-game-subtitle").innerText = gameState.config.subtitle || "";
+
+      const imgLayer = document.getElementById("secret-image-layer");
+      const placeholder = document.getElementById("placeholder-image");
+
+      if (gameState.config.secretImage) {
+        imgLayer.style.backgroundImage = `url('${gameState.config.secretImage}')`;
+        placeholder.style.display = "none";
+      } else {
+        imgLayer.style.backgroundImage = "none";
+        placeholder.style.display = "block";
+      }
+
+      renderDoorsGrid();
+      updateProgress();
+    }
+
+    function renderDoorsGrid() {
+      const grid = document.getElementById("doors-grid");
+      grid.innerHTML = "";
+
+      const rows = gameState.config.rows;
+      const cols = gameState.config.cols;
+      const totalDoors = rows * cols;
+
+      grid.style.gridTemplateRows = `repeat(${rows}, 1fr)`;
+      grid.style.gridTemplateColumns = `repeat(${cols}, 1fr)`;
+
+      for (let i = 1; i <= totalDoors; i++) {
+        const isOpened = gameState.openedDoors.includes(i);
+
+        const doorFrame = document.createElement("div");
+        doorFrame.className = `door-frame ${isOpened ? "opened" : ""}`;
+        doorFrame.setAttribute("data-id", i);
+
+        doorFrame.innerHTML = `
+          <div class="door" onclick="handleDoorClick(${i})">
+            <div class="door-front">
+              <div class="door-icon">🔒</div>
+              <div class="door-number">${i < 10 ? "0" + i : i}</div>
+            </div>
+            <div class="door-back"></div>
+          </div>
+        `;
+        grid.appendChild(doorFrame);
+      }
+    }
+
+    /* BẤM VÀO Ô CỬA */
+    function handleDoorClick(doorId) {
+      if (gameState.openedDoors.includes(doorId)) return;
+
+      gameState.currentActiveDoorId = doorId;
+
+      const qData = gameState.config.questions.find(q => q.id === doorId) || {
+        type: "text",
+        question: "⚠ Chưa thiết lập câu hỏi.",
+        answer: "Chưa có đáp án."
+      };
+
+      document.getElementById("q-modal-title").innerText = `🚪 Ô CỬA SỐ ${doorId}`;
+      document.getElementById("q-modal-question").innerText = qData.question || "⚠ Chưa thiết lập câu hỏi.";
+      document.getElementById("q-modal-answer-text").innerText = qData.answer || "";
+      document.getElementById("q-modal-answer").classList.remove("visible");
+      document.getElementById("user-typed-answer").value = "";
+
+      const mcContainer = document.getElementById("q-modal-mc-container");
+      const textContainer = document.getElementById("q-modal-text-container");
+
+      if (qData.type === "mc") {
+        mcContainer.style.display = "block";
+        textContainer.style.display = "none";
+
+        const btns = document.querySelectorAll(".mc-option-btn");
+        btns.forEach((btn, idx) => {
+          btn.className = "mc-option-btn";
+          const optionText = (qData.options && qData.options[idx]) ? qData.options[idx] : "";
+          document.getElementById(`opt-${idx}-text`).innerText = optionText;
+        });
+      } else {
+        mcContainer.style.display = "none";
+        textContainer.style.display = "block";
+      }
+
+      openModal("question-modal");
+    }
+
+    /* KIỂM TRA TRẮC NGHIỆM */
+    function checkMultipleChoice(selectedIndex) {
+      const qData = gameState.config.questions.find(q => q.id === gameState.currentActiveDoorId);
+      if (!qData || qData.type !== "mc") return;
+
+      const btns = document.querySelectorAll(".mc-option-btn");
+
+      if (selectedIndex === parseInt(qData.correctOpt)) {
+        btns[selectedIndex].classList.add("correct");
+        showToast("🎉 ĐÚNG RỒI! TỰ ĐỘNG MỞ CỬA...", "success");
+        setTimeout(() => {
+          openCurrentDoorFromModal();
+        }, 500);
+      } else {
+        btns[selectedIndex].classList.add("wrong");
+        showToast("❌ Chưa đúng, hãy thử lại!", "danger");
+      }
+    }
+
+    /* KIỂM TRA TỰ LUẬN */
+    function submitTypedAnswer() {
+      const inputVal = document.getElementById("user-typed-answer").value.trim().toLowerCase();
+      const qData = gameState.config.questions.find(q => q.id === gameState.currentActiveDoorId);
+
+      if (!inputVal) {
+        showToast("Vui lòng nhập kết quả!", "warning");
+        return;
+      }
+
+      const correctAns = (qData.answer || "").trim().toLowerCase();
+
+      if (inputVal === correctAns || (correctAns && correctAns.includes(inputVal))) {
+        showToast("🎉 CHÍNH XÁC! TỰ ĐỘNG MỞ CỬA...", "success");
+        setTimeout(() => {
+          openCurrentDoorFromModal();
+        }, 500);
+      } else {
+        showToast("❌ Kết quả chưa đúng, thử lại nhé!", "danger");
+      }
+    }
+
+    function toggleAnswer() {
+      document.getElementById("q-modal-answer").classList.toggle("visible");
+    }
+
+    function openCurrentDoorFromModal() {
+      if (gameState.currentActiveDoorId === null) return;
+      openDoor(gameState.currentActiveDoorId);
+      closeModal("question-modal");
+    }
+
+    function openDoor(doorId) {
+      if (!gameState.openedDoors.includes(doorId)) {
+        gameState.openedDoors.push(doorId);
+
+        const frame = document.querySelector(`.door-frame[data-id='${doorId}']`);
+        if (frame) frame.classList.add("opened");
+
+        updateProgress();
+        checkVictory();
+      }
+    }
+
+    function updateProgress() {
+      const total = gameState.config.rows * gameState.config.cols;
+      const opened = gameState.openedDoors.length;
+      const percent = total > 0 ? Math.round((opened / total) * 100) : 0;
+
+      document.getElementById("progress-text").innerText = `Tiến trình: ${opened}/${total} ô cửa đã mở`;
+      document.getElementById("progress-fill").style.width = `${percent}%`;
+    }
+
+    function checkVictory() {
+      const total = gameState.config.rows * gameState.config.cols;
+      if (gameState.openedDoors.length === total && total > 0) {
+        setTimeout(() => {
+          document.getElementById("victory-overlay").classList.add("active");
+        }, 800);
+      }
+    }
+
+    function closeVictory() {
+      document.getElementById("victory-overlay").classList.remove("active");
+    }
+
+    function restartGame() {
+      gameState.openedDoors = [];
+      renderDoorsGrid();
+      updateProgress();
+      closeVictory();
+      showToast("Đã đóng tất cả các cửa!", "success");
+    }
+
+    function resetState() {
+      if (confirm("Bạn có chắc muốn đặt lại trạng thái trò chơi không?")) {
+        restartGame();
+      }
+    }
+
+    function openAllDoors() {
+      if (confirm("Bạn có chắc chắn muốn mở toàn bộ các ô cửa không?")) {
+        const total = gameState.config.rows * gameState.config.cols;
+        gameState.openedDoors = [];
+        for (let i = 1; i <= total; i++) gameState.openedDoors.push(i);
+        renderDoorsGrid();
+        updateProgress();
+        checkVictory();
+        showToast("Đã mở tất cả ô cửa!", "warning");
+      }
+    }
+
+    /* CÀI ĐẶT */
+    function openSettingsModal() {
+      document.getElementById("cfg-title").value = gameState.config.gameTitle;
+      document.getElementById("cfg-subtitle").value = gameState.config.subtitle;
+      document.getElementById("cfg-rows").value = gameState.config.rows;
+      document.getElementById("cfg-cols").value = gameState.config.cols;
+
+      updateTotalDoorsLabel();
+      renderImagePreview();
+      renderQuestionEditors();
+
+      openModal("settings-modal");
+    }
+
+    function switchTab(tabId) {
+      document.querySelectorAll(".tab-btn").forEach(btn => btn.classList.remove("active"));
+      document.querySelectorAll(".tab-content").forEach(content => content.classList.remove("active"));
+
+      event.target.classList.add("active");
+      document.getElementById(tabId).classList.add("active");
+    }
+
+    function setGridPreset(r, c) {
+      document.getElementById("cfg-rows").value = r;
+      document.getElementById("cfg-cols").value = c;
+      updateTotalDoorsLabel();
+      renderQuestionEditors();
+    }
+
+    function updateGridCustom() {
+      updateTotalDoorsLabel();
+      renderQuestionEditors();
+    }
+
+    function updateTotalDoorsLabel() {
+      const r = parseInt(document.getElementById("cfg-rows").value) || 1;
+      const c = parseInt(document.getElementById("cfg-cols").value) || 1;
+      document.getElementById("cfg-total-doors").innerText = r * c;
+    }
+
+    function handleImageUpload(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = function (event) {
+        gameState.config.secretImage = event.target.result;
+        renderImagePreview();
+        showToast("Đã tải ảnh lên thành công!", "success");
+      };
+      reader.readAsDataURL(file);
+    }
+
+    function renderImagePreview() {
+      const img = document.getElementById("cfg-img-preview");
+      const placeholder = document.getElementById("cfg-img-placeholder");
+
+      if (gameState.config.secretImage) {
+        img.src = gameState.config.secretImage;
+        img.style.display = "block";
+        placeholder.style.display = "none";
+      } else {
+        img.src = "";
+        img.style.display = "none";
+        placeholder.style.display = "block";
+      }
+    }
+
+    function removeSecretImage() {
+      gameState.config.secretImage = "";
+      renderImagePreview();
+      showToast("Đã xóa ảnh bí mật.", "info");
+    }
+
+    function renderQuestionEditors() {
+      const container = document.getElementById("question-editor-list");
+      container.innerHTML = "";
+
+      const r = parseInt(document.getElementById("cfg-rows").value) || 1;
+      const c = parseInt(document.getElementById("cfg-cols").value) || 1;
+      const total = r * c;
+
+      for (let i = 1; i <= total; i++) {
+        const existing = gameState.config.questions.find(q => q.id === i) || { 
+          type: "text", question: "", answer: "", options: ["A. ", "B. ", "C. ", "D. "], correctOpt: 0 
+        };
+
+        const isMC = existing.type === "mc";
+
+        const card = document.createElement("div");
+        card.className = "question-item-card";
+        card.innerHTML = `
+          <div class="question-item-header">
+            <span>🚪 Ô Cửa Số ${i}</span>
+            <div class="type-selector">
+              <label><input type="radio" name="qtype_${i}" value="text" ${!isMC ? 'checked' : ''} onchange="toggleQTypeUI(${i})"> Tự luận</label>
+              <label><input type="radio" name="qtype_${i}" value="mc" ${isMC ? 'checked' : ''} onchange="toggleQTypeUI(${i})"> Trắc nghiệm (4 đáp án)</label>
+            </div>
+          </div>
+
+          <div class="form-group" style="margin-bottom:10px;">
+            <input type="text" class="form-control q-input-q" data-id="${i}" placeholder="Nhập câu hỏi Toán 6..." value="${escapeHtml(existing.question)}">
+          </div>
+
+          <!-- TỰ LUẬN UI -->
+          <div id="editor-text-ui-${i}" style="display: ${!isMC ? 'block' : 'none'};">
+            <div class="form-group" style="margin-bottom:0;">
+              <input type="text" class="form-control q-input-a" data-id="${i}" placeholder="Nhập đáp án..." value="${escapeHtml(existing.answer)}">
+            </div>
+          </div>
+
+          <!-- TRẮC NGHIỆM UI -->
+          <div id="editor-mc-ui-${i}" style="display: ${isMC ? 'block' : 'none'}; background: rgba(0,0,0,0.2); padding: 10px; border-radius: var(--radius-sm);">
+            <label style="font-size:0.8rem; margin-bottom:5px; display:block;">Nhập 4 phương án và chọn phương án đúng:</label>
+            <div style="display:grid; grid-template-columns: 1fr 1fr; gap:8px;">
+              ${[0, 1, 2, 3].map(optIdx => `
+                <div style="display:flex; align-items:center; gap:5px;">
+                  <input type="radio" name="correct_opt_${i}" value="${optIdx}" ${(existing.correctOpt == optIdx) ? 'checked' : ''}>
+                  <input type="text" class="form-control q-input-opt-${optIdx}" data-id="${i}" placeholder="Lựa chọn ${String.fromCharCode(65+optIdx)}" value="${escapeHtml(existing.options ? existing.options[optIdx] : '')}">
+                </div>
+              `).join('')}
+            </div>
+          </div>
+        `;
+        container.appendChild(card);
+      }
+    }
+
+    function toggleQTypeUI(id) {
+      const isMC = document.querySelector(`input[name='qtype_${id}'][value='mc']`).checked;
+      document.getElementById(`editor-text-ui-${id}`).style.display = isMC ? 'none' : 'block';
+      document.getElementById(`editor-mc-ui-${id}`).style.display = isMC ? 'block' : 'none';
+    }
+
+    function saveSettings() {
+      gameState.config.gameTitle = document.getElementById("cfg-title").value.trim();
+      gameState.config.subtitle = document.getElementById("cfg-subtitle").value.trim();
+      gameState.config.rows = parseInt(document.getElementById("cfg-rows").value) || 3;
+      gameState.config.cols = parseInt(document.getElementById("cfg-cols").value) || 4;
+
+      const newQuestions = [];
+      const total = gameState.config.rows * gameState.config.cols;
+
+      for (let i = 1; i <= total; i++) {
+        const qType = document.querySelector(`input[name='qtype_${i}']:checked`).value;
+        const qInput = document.querySelector(`.q-input-q[data-id='${i}']`).value.trim();
+
+        if (qType === "mc") {
+          const opt0 = document.querySelector(`.q-input-opt-0[data-id='${i}']`).value.trim() || "A. Option A";
+          const opt1 = document.querySelector(`.q-input-opt-1[data-id='${i}']`).value.trim() || "B. Option B";
+          const opt2 = document.querySelector(`.q-input-opt-2[data-id='${i}']`).value.trim() || "C. Option C";
+          const opt3 = document.querySelector(`.q-input-opt-3[data-id='${i}']`).value.trim() || "D. Option D";
+
+          const correctOpt = document.querySelector(`input[name='correct_opt_${i}']:checked`) ? 
+                             document.querySelector(`input[name='correct_opt_${i}']:checked`).value : 0;
+
+          const optionsList = [opt0, opt1, opt2, opt3];
+
+          newQuestions.push({
+            id: i,
+            type: "mc",
+            question: qInput,
+            options: optionsList,
+            correctOpt: parseInt(correctOpt),
+            answer: optionsList[correctOpt]
+          });
+        } else {
+          const aInput = document.querySelector(`.q-input-a[data-id='${i}']`).value.trim();
+          newQuestions.push({
+            id: i,
+            type: "text",
+            question: qInput,
+            answer: aInput
+          });
+        }
+      }
+
+      gameState.config.questions = newQuestions;
+      gameState.openedDoors = [];
+
+      saveToLocalStorage();
+      renderApp();
+      closeModal("settings-modal");
+      showToast("✓ Đã lưu cấu hình thành công!", "success");
+    }
+
+    function saveToLocalStorage() {
+      try {
+        localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(gameState.config));
+      } catch (e) {
+        showToast("Không thể lưu cấu hình (Có thể do dung lượng ảnh quá lớn)!", "danger");
+      }
+    }
+
+    function loadFromLocalStorage() {
+      try {
+        const saved = localStorage.getItem(LOCAL_STORAGE_KEY);
+        if (saved) gameState.config = JSON.parse(saved);
+      } catch (e) {
+        console.error("Lỗi đọc LocalStorage:", e);
+      }
+    }
+
+    function clearConfiguration() {
+      if (confirm("Khôi phục bộ câu hỏi Toán 6 mặc định?")) {
+        localStorage.removeItem(LOCAL_STORAGE_KEY);
+        gameState.config = JSON.parse(JSON.stringify(DEFAULT_CONFIG));
+        gameState.openedDoors = [];
+        renderApp();
+        closeModal("settings-modal");
+        showToast("Đã khôi phục mặc định!", "info");
+      }
+    }
+
+    function exportJSON() {
+      const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(gameState.config, null, 2));
+      const downloadAnchor = document.createElement("a");
+      downloadAnchor.setAttribute("href", dataStr);
+      downloadAnchor.setAttribute("download", `Toan6_OCuaBiMat_${new Date().toISOString().slice(0, 10)}.json`);
+      document.body.appendChild(downloadAnchor);
+      downloadAnchor.click();
+      downloadAnchor.remove();
+      showToast("Đã xuất file JSON thành công!", "success");
+    }
+
+    function importJSON(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = function (event) {
+        try {
+          const importedData = JSON.parse(event.target.result);
+          if (!importedData.rows || !importedData.cols || !Array.isArray(importedData.questions)) {
+            throw new Error("File không đúng cấu trúc!");
+          }
+          gameState.config = importedData;
+          gameState.openedDoors = [];
+          saveToLocalStorage();
+          renderApp();
+          closeModal("settings-modal");
+          showToast("✓ Đã nhập bộ câu hỏi thành công!", "success");
+        } catch (err) {
+          showToast("❌ File cấu hình JSON không hợp lệ!", "danger");
+        }
+      };
+      reader.readAsText(file);
+    }
+
+    function openModal(modalId) { document.getElementById(modalId).classList.add("active"); }
+    function closeModal(modalId) { document.getElementById(modalId).classList.remove("active"); }
+    function openHelpModal() { openModal("help-modal"); }
+
+    function showToast(message, type = "info") {
+      const container = document.getElementById("toast-container");
+      const toast = document.createElement("div");
+      toast.className = `toast ${type}`;
+      toast.innerText = message;
+      container.appendChild(toast);
+
+      setTimeout(() => {
+        toast.style.opacity = "0";
+        toast.style.transform = "translateX(100%)";
+        toast.style.transition = "all 0.3s ease";
+        setTimeout(() => toast.remove(), 300);
+      }, 3000);
+    }
+
+    function escapeHtml(str) {
+      if (!str) return "";
+      return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
+    }
+  </script>
+</body>
+</html>
